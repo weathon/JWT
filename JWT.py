@@ -16,6 +16,11 @@ def issue(exp_time, username):
     return JWT
 
 
+class ForgedJWT(Exception):
+    pass
+
+class ExpiredJWT(Exception):
+    pass
 
 def getUserName(JWT: str): #validate vs verify vs check
     """
@@ -24,11 +29,11 @@ def getUserName(JWT: str): #validate vs verify vs check
     If the JWT is forged, exception ForgedJWT will be raised
     """
     JWT = json.loads(JWT)
-    if time.time()>int(JWT["exp_time"]):
-        raise Exception("ExpiredJWT")
-    msg=JWT["username"]+"=="+JWT["exp_time"]+secret
+    if time.time()>JWT["exp_time"]:
+        raise ExpiredJWT
+    msg=JWT["username"]+"=="+str(JWT["exp_time"])+secret
     signature = hmac.new(key.encode('utf-8'), msg = msg.encode('utf-8'), digestmod=hashlib.sha256).hexdigest()
     if signature != JWT["signature"]:
-        raise Exception("ForgedJWT")
+        raise ForgedJWT
     return JWT["username"]
     
