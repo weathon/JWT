@@ -149,4 +149,12 @@ for i in range(3):
         print("Failed")
     else:
         print(f'{mark} Passed!')
-        
+       
+
+
+print("Test signup with exsiting username")
+signup("aaa","mmm")
+if signup("aaa","mmm") == -1:
+    print(f'{mark} Passed!')
+else:
+    print("Failed")

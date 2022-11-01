@@ -26,7 +26,7 @@ def get_db():
 
 
 class User(Base):
-    __tablename__ = "users" 
+    __tablename__ = "users_2" 
 
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String(20), index=True)
@@ -43,6 +43,9 @@ Base.metadata.create_all(engine)
 
 def signup(username, password):
     with Session(engine) as session:
+        u = session.query(User).filter(User.username == username)
+        if len(list(u)) != 0:
+            return -1
         salt = bcrypt.gensalt()
         hash = bcrypt.hashpw(password.encode('utf-8'), salt)
         db_user = User(username = username, passwordSalt=hash)
@@ -53,7 +56,7 @@ def login(username, password):
     with Session(engine) as session:
         # https://www.tutorialspoint.com/sqlalchemy/sqlalchemy_orm_filter_operators.htm huiyi django
         u = session.query(User).filter(User.username == username)
-    return bcrypt.checkpw(password.encode('utf-8'),list(u)[0].passwordSalt)
+    return bcrypt.checkpw(password.encode('utf-8'),list(u)[0].passwordSalt.encode("utf-8"))
 # signup("test"," ")
 
 # print(login("test"," "))
