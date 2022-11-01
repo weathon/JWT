@@ -42,17 +42,18 @@ Base.metadata.create_all(engine)
 # print(bcrypt.checkpw("123456".encode('utf-8'),hash))
 
 def signup(username, password):
-    db = Session(engine)
-    # salt = bcrypt.gensalt()
-    # hash = bcrypt.hashpw(password.encode('utf-8'), salt)
-    # db_user = User(username = username, passwordSalt=hash)
-    # db.commit()
-    # db.refresh(db_user)
+    with Session(engine) as session:
+        salt = bcrypt.gensalt()
+        hash = bcrypt.hashpw(password.encode('utf-8'), salt)
+        db_user = User(username = username, passwordSalt=hash)
+        session.add(db_user)
+        session.commit()
 
 def login(username, password):
-    db = get_db()
-    print(db.query(models.Post).filter(username=username))
+    with Session(engine) as session:
+        # https://www.tutorialspoint.com/sqlalchemy/sqlalchemy_orm_filter_operators.htm huiyi django
+        u = session.query(User).filter(User.username == username)
+    return bcrypt.checkpw(password.encode('utf-8'),list(u)[0].passwordSalt)
+# signup("test"," ")
 
-signup("test"," ")
-
-login("username","")
+# print(login("test"," "))
