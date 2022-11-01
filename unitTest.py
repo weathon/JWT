@@ -65,3 +65,25 @@ try:
     print("Failed!")
 except JWT.ForgedJWT: #err as not working 
     print(f'{mark} Passed!')
+
+
+print("Testing For Forged JWT 3 - Fake Key")
+jwt = JWT.issue(time.time()+100,"weathon")
+jwt = json.dumps(jwt)
+JWT.key = "ifrne9c854n47n8cr4"
+try:
+    JWT.getUserName(jwt)
+    print("Failed!")
+except JWT.ForgedJWT: #err as not working 
+    print(f'{mark} Passed!')
+
+
+print("Testing For Forged JWT 4 - Fake secret")
+jwt = JWT.issue(time.time()+100,"weathon")
+jwt = json.dumps(jwt)
+JWT.secret = "ceiouNX&#nt"
+try:
+    JWT.getUserName(jwt)
+    print("Failed!")
+except JWT.ForgedJWT: #err as not working 
+    print(f'{mark} Passed!')
